@@ -17,11 +17,12 @@ from datetime import datetime
 app = Flask(__name__, static_folder="static", static_url_path="/static")
 
 # ─────────────────────────────────────────────
-# INTERVIEW QUESTIONS
+# INTERVIEW QUESTION BANK (Role-Based)
 # ─────────────────────────────────────────────
-QUESTIONS = [
+
+# Common questions asked in every role
+COMMON_QUESTIONS = [
     {
-        "id": 1,
         "text": "Tell us about yourself and your most relevant experience for this role.",
         "keywords": [
             "experience", "skills", "projects", "team", "work", "developed",
@@ -31,29 +32,6 @@ QUESTIONS = [
         "category": "Introduction"
     },
     {
-        "id": 2,
-        "text": "Describe a challenging technical problem you faced and how you solved it.",
-        "keywords": [
-            "problem", "solution", "debug", "fix", "analyze", "approach",
-            "algorithm", "optimize", "issue", "resolved", "implemented",
-            "strategy", "code", "tested", "performance", "architecture",
-            "system", "logic"
-        ],
-        "category": "Problem Solving"
-    },
-    {
-        "id": 3,
-        "text": "What do you understand about data structures and when would you use a hash map vs an array?",
-        "keywords": [
-            "data structure", "hash", "map", "array", "lookup",
-            "time complexity", "O(1)", "O(n)", "key", "value", "index",
-            "search", "insert", "collision", "list", "memory",
-            "performance", "access"
-        ],
-        "category": "Technical Knowledge"
-    },
-    {
-        "id": 4,
         "text": "How do you approach working in a team? Can you give an example of a team collaboration?",
         "keywords": [
             "team", "collaborate", "communication", "agile", "scrum",
@@ -64,7 +42,6 @@ QUESTIONS = [
         "category": "Teamwork"
     },
     {
-        "id": 5,
         "text": "Where do you see yourself in 3 years, and how does this role align with your goals?",
         "keywords": [
             "goal", "growth", "learn", "career", "leadership", "impact",
@@ -73,8 +50,404 @@ QUESTIONS = [
             "industry", "vision"
         ],
         "category": "Career Goals"
-    }
+    },
 ]
+
+# Role-specific question pools (pick randomly from these)
+ROLE_QUESTIONS = {
+    "frontend": [
+        {
+            "text": "Explain the difference between CSS Flexbox and Grid. When would you use one over the other?",
+            "keywords": [
+                "flexbox", "grid", "layout", "responsive", "container", "row",
+                "column", "align", "justify", "gap", "template", "axis",
+                "one-dimensional", "two-dimensional", "wrap", "flex"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "What is the Virtual DOM and how does it improve performance in frameworks like React?",
+            "keywords": [
+                "virtual dom", "dom", "react", "render", "diff", "reconciliation",
+                "performance", "update", "component", "state", "re-render",
+                "batch", "efficient", "tree", "node", "browser"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "How do you handle responsive design and cross-browser compatibility in your projects?",
+            "keywords": [
+                "responsive", "media query", "breakpoint", "mobile", "viewport",
+                "cross-browser", "testing", "polyfill", "progressive enhancement",
+                "graceful degradation", "flexbox", "grid", "rem", "em", "device"
+            ],
+            "category": "Problem Solving"
+        },
+        {
+            "text": "Explain how JavaScript closures work and give a practical use case.",
+            "keywords": [
+                "closure", "scope", "function", "variable", "lexical", "inner",
+                "outer", "return", "private", "encapsulation", "callback",
+                "event", "counter", "module", "access", "memory"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "Describe a challenging UI bug you encountered and the debugging process you followed.",
+            "keywords": [
+                "bug", "debug", "devtools", "console", "inspect", "css",
+                "layout", "rendering", "browser", "fix", "reproduce",
+                "breakpoint", "network", "performance", "solution", "root cause"
+            ],
+            "category": "Problem Solving"
+        },
+    ],
+    "backend": [
+        {
+            "text": "Explain RESTful API design principles. What makes a good API?",
+            "keywords": [
+                "rest", "api", "endpoint", "http", "get", "post", "put", "delete",
+                "status code", "resource", "url", "json", "stateless",
+                "authentication", "versioning", "pagination", "idempotent"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "How would you design a database schema for an e-commerce application?",
+            "keywords": [
+                "database", "schema", "table", "relation", "primary key",
+                "foreign key", "normalization", "index", "query", "sql",
+                "user", "product", "order", "join", "one-to-many",
+                "many-to-many", "performance"
+            ],
+            "category": "System Design"
+        },
+        {
+            "text": "What strategies do you use to handle errors and exceptions in server-side code?",
+            "keywords": [
+                "error", "exception", "try", "catch", "handling", "logging",
+                "middleware", "status code", "validation", "graceful",
+                "fallback", "retry", "monitoring", "stack trace", "debug"
+            ],
+            "category": "Problem Solving"
+        },
+        {
+            "text": "Explain the concept of caching and how it can improve application performance.",
+            "keywords": [
+                "cache", "redis", "memcached", "performance", "latency",
+                "ttl", "invalidation", "hit", "miss", "memory", "cdn",
+                "database", "query", "response", "strategy", "layer"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "How do you ensure security in a web application? Name specific practices.",
+            "keywords": [
+                "security", "authentication", "authorization", "jwt", "token",
+                "encryption", "https", "sql injection", "xss", "csrf",
+                "sanitize", "validation", "password", "hash", "cors", "owasp"
+            ],
+            "category": "Problem Solving"
+        },
+    ],
+    "data_science": [
+        {
+            "text": "Explain the difference between supervised and unsupervised learning with examples.",
+            "keywords": [
+                "supervised", "unsupervised", "classification", "regression",
+                "clustering", "label", "training", "prediction", "model",
+                "k-means", "decision tree", "neural network", "feature",
+                "dataset", "algorithm", "accuracy"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "How do you handle missing data and outliers in a dataset?",
+            "keywords": [
+                "missing", "null", "imputation", "mean", "median", "mode",
+                "outlier", "iqr", "z-score", "remove", "fill", "interpolation",
+                "data cleaning", "preprocessing", "distribution", "analysis"
+            ],
+            "category": "Problem Solving"
+        },
+        {
+            "text": "What evaluation metrics would you use for a classification model and why?",
+            "keywords": [
+                "accuracy", "precision", "recall", "f1", "confusion matrix",
+                "roc", "auc", "true positive", "false positive", "specificity",
+                "sensitivity", "metric", "evaluation", "threshold",
+                "imbalanced", "class"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "Explain overfitting and underfitting. How do you prevent them?",
+            "keywords": [
+                "overfitting", "underfitting", "regularization", "cross-validation",
+                "training", "validation", "test", "bias", "variance",
+                "dropout", "pruning", "complexity", "generalization",
+                "l1", "l2", "early stopping"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "Walk us through a data analysis project you've done. What was your process?",
+            "keywords": [
+                "data", "analysis", "exploration", "visualization", "insight",
+                "pandas", "python", "clean", "transform", "hypothesis",
+                "correlation", "trend", "report", "finding", "stakeholder",
+                "dashboard"
+            ],
+            "category": "Problem Solving"
+        },
+    ],
+    "fullstack": [
+        {
+            "text": "How would you architect a full-stack web application from scratch? Walk us through your decisions.",
+            "keywords": [
+                "architecture", "frontend", "backend", "database", "api",
+                "framework", "react", "node", "flask", "django",
+                "deployment", "docker", "cloud", "scalable", "structure",
+                "component", "mvc"
+            ],
+            "category": "System Design"
+        },
+        {
+            "text": "Explain the request-response lifecycle of a web application.",
+            "keywords": [
+                "request", "response", "http", "client", "server", "dns",
+                "tcp", "render", "browser", "route", "controller",
+                "database", "json", "html", "middleware", "status"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "How do you manage state across a full-stack application — both frontend and backend?",
+            "keywords": [
+                "state", "session", "token", "jwt", "redux", "context",
+                "database", "cookie", "local storage", "cache",
+                "synchronize", "api", "auth", "persist", "global"
+            ],
+            "category": "Problem Solving"
+        },
+        {
+            "text": "Describe your approach to debugging a production issue that spans both frontend and backend.",
+            "keywords": [
+                "debug", "production", "log", "monitoring", "error",
+                "network", "devtools", "console", "trace", "reproduce",
+                "api", "database", "deploy", "rollback", "fix",
+                "root cause"
+            ],
+            "category": "Problem Solving"
+        },
+        {
+            "text": "What is CI/CD and how have you integrated it into your projects?",
+            "keywords": [
+                "ci", "cd", "continuous", "integration", "deployment",
+                "pipeline", "github actions", "jenkins", "docker",
+                "test", "build", "automate", "deploy", "staging",
+                "production", "workflow"
+            ],
+            "category": "Technical Knowledge"
+        },
+    ],
+    "devops": [
+        {
+            "text": "Explain containerization with Docker. Why is it useful?",
+            "keywords": [
+                "docker", "container", "image", "dockerfile", "layer",
+                "isolation", "portable", "microservice", "deploy",
+                "registry", "compose", "volume", "network", "lightweight",
+                "virtual machine", "environment"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "How would you set up a monitoring and alerting system for a production application?",
+            "keywords": [
+                "monitoring", "alert", "prometheus", "grafana", "log",
+                "metric", "dashboard", "uptime", "latency", "error rate",
+                "health check", "notification", "threshold", "incident",
+                "observability", "trace"
+            ],
+            "category": "System Design"
+        },
+        {
+            "text": "Describe Infrastructure as Code and tools you've used for it.",
+            "keywords": [
+                "infrastructure", "code", "terraform", "ansible", "cloudformation",
+                "provisioning", "automate", "declarative", "state",
+                "version control", "reproducible", "cloud", "server",
+                "configuration", "scalable"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "How do you handle scaling an application that suddenly receives 10x traffic?",
+            "keywords": [
+                "scaling", "horizontal", "vertical", "load balancer",
+                "auto-scaling", "cache", "cdn", "database", "replica",
+                "queue", "microservice", "bottleneck", "performance",
+                "traffic", "cloud", "kubernetes"
+            ],
+            "category": "Problem Solving"
+        },
+        {
+            "text": "What is your approach to managing secrets and environment variables in production?",
+            "keywords": [
+                "secret", "environment", "variable", "vault", "encryption",
+                "config", "dotenv", "key management", "rotation",
+                "secure", "access", "credential", "production",
+                "kubernetes secret", "aws"
+            ],
+            "category": "Problem Solving"
+        },
+    ],
+    "cybersecurity": [
+        {
+            "text": "Explain the OWASP Top 10 vulnerabilities and how you would mitigate them.",
+            "keywords": [
+                "owasp", "vulnerability", "injection", "xss", "csrf",
+                "authentication", "authorization", "encryption", "security",
+                "misconfiguration", "sensitive data", "logging",
+                "monitoring", "attack", "mitigation", "patch"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "How does HTTPS work and why is it important for web security?",
+            "keywords": [
+                "https", "ssl", "tls", "certificate", "encryption",
+                "handshake", "public key", "private key", "symmetric",
+                "asymmetric", "man-in-the-middle", "secure", "trust",
+                "browser", "protocol", "port"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "Describe how you would conduct a basic security audit of a web application.",
+            "keywords": [
+                "audit", "scan", "vulnerability", "penetration", "test",
+                "review", "code", "dependency", "configuration", "access",
+                "log", "authentication", "encryption", "report",
+                "remediation", "compliance"
+            ],
+            "category": "Problem Solving"
+        },
+        {
+            "text": "What is the difference between symmetric and asymmetric encryption? When would you use each?",
+            "keywords": [
+                "symmetric", "asymmetric", "key", "aes", "rsa",
+                "public", "private", "encrypt", "decrypt", "performance",
+                "security", "digital signature", "certificate", "exchange",
+                "algorithm", "use case"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "How would you respond to a security incident or data breach?",
+            "keywords": [
+                "incident", "response", "breach", "contain", "isolate",
+                "investigate", "log", "forensic", "notify", "recover",
+                "patch", "prevent", "report", "team", "communication",
+                "plan"
+            ],
+            "category": "Problem Solving"
+        },
+    ],
+    "general": [
+        {
+            "text": "Describe a challenging technical problem you faced and how you solved it.",
+            "keywords": [
+                "problem", "solution", "debug", "fix", "analyze", "approach",
+                "algorithm", "optimize", "issue", "resolved", "implemented",
+                "strategy", "code", "tested", "performance", "architecture",
+                "system", "logic"
+            ],
+            "category": "Problem Solving"
+        },
+        {
+            "text": "What do you understand about data structures and when would you use a hash map vs an array?",
+            "keywords": [
+                "data structure", "hash", "map", "array", "lookup",
+                "time complexity", "O(1)", "O(n)", "key", "value", "index",
+                "search", "insert", "collision", "list", "memory",
+                "performance", "access"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "What is version control and how do you use Git in your workflow?",
+            "keywords": [
+                "git", "version control", "branch", "commit", "merge",
+                "pull request", "repository", "clone", "push", "pull",
+                "conflict", "rebase", "workflow", "github", "collaboration"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "Explain the concept of Object-Oriented Programming and its four pillars.",
+            "keywords": [
+                "oop", "object", "class", "inheritance", "polymorphism",
+                "encapsulation", "abstraction", "method", "constructor",
+                "instance", "interface", "design", "reusable", "modular"
+            ],
+            "category": "Technical Knowledge"
+        },
+        {
+            "text": "How do you stay updated with new technologies and continuously improve your skills?",
+            "keywords": [
+                "learn", "course", "documentation", "blog", "youtube",
+                "project", "practice", "community", "conference",
+                "open source", "mentor", "book", "certification",
+                "hands-on", "curiosity"
+            ],
+            "category": "Problem Solving"
+        },
+    ],
+}
+
+# Available roles (displayed to the user)
+AVAILABLE_ROLES = [
+    {"id": "frontend", "label": "Frontend Developer", "icon": "🎨"},
+    {"id": "backend", "label": "Backend Developer", "icon": "⚙️"},
+    {"id": "fullstack", "label": "Full Stack Developer", "icon": "🔗"},
+    {"id": "data_science", "label": "Data Science / ML", "icon": "📊"},
+    {"id": "devops", "label": "DevOps / Cloud", "icon": "☁️"},
+    {"id": "cybersecurity", "label": "Cybersecurity", "icon": "🔒"},
+    {"id": "general", "label": "General / Other", "icon": "💻"},
+]
+
+
+import random
+
+def build_questions_for_role(role):
+    """
+    Build a set of 5 questions for a role:
+    - 2 common questions (randomly picked from 3)
+    - 3 role-specific questions (randomly picked from 5)
+    All numbered with IDs.
+    """
+    common_pool = COMMON_QUESTIONS[:]
+    random.shuffle(common_pool)
+    selected_common = common_pool[:2]
+
+    role_pool = ROLE_QUESTIONS.get(role, ROLE_QUESTIONS["general"])[:]
+    random.shuffle(role_pool)
+    selected_role = role_pool[:3]
+
+    # Interleave: common first, then role-specific
+    final = [selected_common[0]] + selected_role[:2] + [selected_common[1]] + selected_role[2:]
+
+    # Assign IDs
+    for i, q in enumerate(final):
+        q["id"] = i + 1
+
+    return final
+
+
+# Active question sets per session (stores the generated questions)
+# (sessions dict already exists below)
 
 # ─── Filler / Hesitation words (used for Confidence scoring) ───
 FILLER_WORDS = [
@@ -715,17 +1088,35 @@ def serve_index():
     return send_from_directory("static", "index.html")
 
 
+@app.route("/api/roles", methods=["GET"])
+def get_roles():
+    """Return available interview roles."""
+    return jsonify({"roles": AVAILABLE_ROLES})
+
+
 @app.route("/api/questions", methods=["GET"])
 def get_questions():
-    """Return all interview questions."""
+    """Return interview questions for a given role and session."""
+    role = request.args.get("role", "general")
+    session_id = request.args.get("sessionId", "default")
+
+    # Build questions for this session
+    questions = build_questions_for_role(role)
+
+    # Store questions in session so /evaluate can find them
+    if session_id not in sessions:
+        sessions[session_id] = {"answers": [], "user": None, "questions": [], "role": role}
+    sessions[session_id]["questions"] = questions
+    sessions[session_id]["role"] = role
+
     questions_out = []
-    for q in QUESTIONS:
+    for q in questions:
         questions_out.append({
             "id": q["id"],
             "text": q["text"],
             "category": q["category"]
         })
-    return jsonify({"questions": questions_out, "total": len(questions_out)})
+    return jsonify({"questions": questions_out, "total": len(questions_out), "role": role})
 
 
 @app.route("/api/evaluate", methods=["POST"])
@@ -746,9 +1137,12 @@ def evaluate_answer():
     if not answer:
         return jsonify({"error": "Answer cannot be empty"}), 400
 
-    # Find the question
+    # Find the question from session
     question = None
-    for q in QUESTIONS:
+    session_questions = []
+    if session_id in sessions and "questions" in sessions[session_id]:
+        session_questions = sessions[session_id]["questions"]
+    for q in session_questions:
         if q["id"] == question_id:
             question = q
             break
@@ -774,7 +1168,7 @@ def evaluate_answer():
 
     # Store in session
     if session_id not in sessions:
-        sessions[session_id] = {"answers": [], "user": None}
+        sessions[session_id] = {"answers": [], "user": None, "questions": [], "role": "general"}
 
     sessions[session_id]["answers"].append({
         "questionId": question_id,
@@ -860,7 +1254,7 @@ def reset_session():
     """Reset a session for a new interview."""
     data = request.get_json() or {}
     session_id = data.get("sessionId", "default")
-    sessions[session_id] = {"answers": [], "user": None}
+    sessions[session_id] = {"answers": [], "user": None, "questions": [], "role": "general"}
     return jsonify({"message": "Session reset successfully"})
 
 

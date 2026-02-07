@@ -13,6 +13,7 @@
 const state = {
     sessionId: "session_" + Date.now(),
     user: null,
+    role: "general",
     questions: [],
     currentQuestionIndex: 0,
     answers: [],
@@ -33,6 +34,7 @@ const DOM = {
     loginScreen: $("loginScreen"),
     loginName: $("loginName"),
     loginEmail: $("loginEmail"),
+    loginRole: $("loginRole"),
     loginBtn: $("loginBtn"),
     // App
     appContainer: $("appContainer"),
@@ -97,6 +99,7 @@ function checkExistingSession() {
     const saved = localStorage.getItem("selectra_user");
     if (saved) {
         state.user = JSON.parse(saved);
+        state.role = localStorage.getItem("selectra_role") || "general";
         startApp();
     }
 }
@@ -142,7 +145,9 @@ function handleLogin() {
     }
 
     state.user = { name, email };
+    state.role = DOM.loginRole.value;
     localStorage.setItem("selectra_user", JSON.stringify(state.user));
+    localStorage.setItem("selectra_role", state.role);
     startApp();
 }
 
@@ -164,7 +169,7 @@ async function startApp() {
 
     // Fetch questions from backend
     try {
-        const res = await fetch("/api/questions");
+        const res = await fetch(`/api/questions?role=${state.role}&sessionId=${state.sessionId}`);
         const data = await res.json();
         state.questions = data.questions;
     } catch (err) {
@@ -172,10 +177,23 @@ async function startApp() {
         return;
     }
 
+    // Role label for display
+    const roleLabels = {
+        frontend: "Frontend Developer",
+        backend: "Backend Developer",
+        fullstack: "Full Stack Developer",
+        data_science: "Data Science / ML",
+        devops: "DevOps / Cloud",
+        cybersecurity: "Cybersecurity",
+        general: "General"
+    };
+    const roleDisplay = roleLabels[state.role] || state.role;
+
     // Welcome message
     addMessage("ai",
         `Welcome to <strong>Selectra</strong>, ${state.user.name}! 🎯<br><br>
-        I'm your AI Interview Agent. I'll ask you <strong>${state.questions.length} questions</strong> 
+        I'm your AI Interview Agent. You've selected the <strong>${roleDisplay}</strong> track.<br>
+        I'll ask you <strong>${state.questions.length} questions</strong> tailored to this role 
         and provide real-time scoring with explainable feedback.<br><br>
         Let's begin when you're ready!`
     );
@@ -774,6 +792,7 @@ async function newInterview() {
     state.latestSuggestions = null;
     state.latestExplanations = null;
     state.readiness = null;
+    state.role = localStorage.getItem("selectra_role") || "general";
 
     // Reset UI
     DOM.chatMessages.innerHTML = "";
