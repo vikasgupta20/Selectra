@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Selectra — AI Interview Agent</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>" />
+</head>
+
+<body>
+
+    <!-- ═══════════════════════════════════════════════
+     LOGIN SCREEN
+     ═══════════════════════════════════════════════ -->
+    <div id="loginScreen">
+        <div class="login-card">
+            <div class="login-logo">Selectra</div>
+            <div class="login-tagline">Where interviews meet insight.</div>
+            <div class="login-hackathon">⚡ MICROSOFT FORGE HACKATHON 2026</div>
+
+            <div class="form-group">
+                <label for="loginName">Your Name</label>
+                <input type="text" id="loginName" placeholder="Enter your full name" autocomplete="name" />
+            </div>
+            <div class="form-group">
+                <label for="loginEmail">Email Address</label>
+                <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" />
+            </div>
+
+            <button id="loginBtn" class="btn-primary">
+                Start Interview →
+            </button>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+     MAIN APP CONTAINER
+     ═══════════════════════════════════════════════ -->
+    <div id="appContainer">
+
+        <!-- ─── Header Bar ─── -->
+        <header class="app-header">
+            <a href="/" class="header-brand" id="brandLink" title="Go to Homepage">
+                <svg class="brand-logo" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#3B82F6" />
+                            <stop offset="100%" stop-color="#6366F1" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="40" height="40" rx="10" fill="url(#logoGrad)" />
+                    <path d="M12 26 Q12 14 20 14 Q28 14 28 20 Q28 26 20 26" stroke="white" stroke-width="2.5"
+                        fill="none" stroke-linecap="round" />
+                    <circle cx="20" cy="20" r="3" fill="white" />
+                    <line x1="20" y1="10" x2="20" y2="14" stroke="white" stroke-width="2" stroke-linecap="round" />
+                    <line x1="28" y1="13" x2="26" y2="16" stroke="white" stroke-width="2" stroke-linecap="round" />
+                    <line x1="12" y1="13" x2="14" y2="16" stroke="white" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                <h1>Selectra</h1>
+                <span>Where interviews meet insight.</span>
+            </a>
+            <div class="header-actions">
+                <span class="header-user" id="headerUser"></span>
+                <button class="btn-icon" id="themeToggle" title="Toggle Dark Mode">🌙</button>
+            </div>
+        </header>
+
+        <!-- ─── Body: Chat + Sidebar ─── -->
+        <div class="app-body">
+
+            <!-- ══ Chat Panel ══ -->
+            <div class="chat-panel">
+                <div id="chatMessages"></div>
+
+                <div class="chat-input-area">
+                    <div class="chat-input-wrapper">
+                        <textarea id="answerInput" placeholder="Type your answer here..." rows="1" disabled></textarea>
+                        <button id="sendBtn" disabled title="Send">➤</button>
+                    </div>
+                    <div class="input-hint" id="inputHint">Waiting to start...</div>
+                </div>
+            </div>
+
+            <!-- ══ Sidebar – Live Scorecard ══ -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h2>Live Scorecard</h2>
+                    <p>Real-time scoring with explainable AI</p>
+                </div>
+
+                <div class="sidebar-content">
+
+                    <!-- Progress Ring -->
+                    <div class="progress-section">
+                        <div class="progress-ring-container">
+                            <svg class="progress-ring" width="56" height="56">
+                                <circle class="progress-ring-bg" cx="28" cy="28" r="22" />
+                                <circle class="progress-ring-fill" id="progressRingFill" cx="28" cy="28" r="22"
+                                    stroke-dasharray="138.23" stroke-dashoffset="138.23" />
+                            </svg>
+                            <span class="progress-ring-text" id="progressRingText">0/0</span>
+                        </div>
+                        <div class="progress-info">
+                            <div class="progress-label" id="progressText">0 of 0 Answered</div>
+                            <div class="progress-detail" id="progressDetail">0% Complete</div>
+                        </div>
+                    </div>
+
+                    <!-- Overall Score -->
+                    <div class="overall-score-card" id="overallScoreCard" style="display: none;">
+                        <div class="overall-score-value" id="overallScoreValue">0</div>
+                        <div class="overall-score-label">Overall Score / 10</div>
+                    </div>
+
+                    <!-- Score Bars -->
+                    <div class="scores-section">
+                        <h3>Dimension Scores</h3>
+                        <div id="scoresContainer">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Readiness Badge -->
+                    <div class="readiness-badge" id="readinessBadge" style="display: none;">
+                        <!-- Dynamically populated -->
+                    </div>
+
+                    <!-- Suggestions -->
+                    <div class="scores-section">
+                        <h3>💡 Suggestions</h3>
+                        <div id="suggestionsContainer">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- XAI Panel -->
+                    <div class="xai-panel" id="xaiPanel">
+                        <h4>🔍 Explainable AI Analysis</h4>
+                        <p style="font-size: 0.78rem; color: var(--text-muted);">
+                            Submit your first answer to see analysis.
+                        </p>
+                    </div>
+
+                </div>
+            </aside>
+
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+     REPORT (Full Screen Overlay)
+     ═══════════════════════════════════════════════ -->
+    <div id="reportSection">
+        <div id="reportContent">
+            <!-- Populated dynamically by JS -->
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
