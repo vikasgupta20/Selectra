@@ -932,7 +932,9 @@ body {
     z-index: 1000;
     background: var(--bg-primary);
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     padding: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 #reportSection.active {
@@ -1184,7 +1186,9 @@ body {
     justify-content: center;
     gap: 12px;
     margin-top: 32px;
+    margin-bottom: 40px;
     flex-wrap: wrap;
+    padding-bottom: 20px;
 }
 
 .btn-report {
@@ -1341,15 +1345,39 @@ body {
 }
 
 @media (max-width: 768px) {
+    body {
+        overflow: auto;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    #appContainer {
+        height: auto;
+        min-height: 100vh;
+    }
+
     .app-body {
         flex-direction: column;
+        overflow: visible;
+        min-height: 0;
+    }
+
+    .chat-panel {
+        min-height: 60vh;
+        max-height: none;
+    }
+
+    #chatMessages {
+        min-height: 300px;
+        max-height: 60vh;
     }
 
     .sidebar {
         width: 100%;
-        max-height: 40vh;
+        max-height: none;
         border-left: none;
         border-top: 1px solid var(--border-light);
+        overflow-y: visible;
     }
 
     .report-dim-grid {
@@ -1367,6 +1395,23 @@ body {
     .message {
         max-width: 95%;
     }
+
+    #reportSection {
+        position: fixed;
+        inset: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .report-actions {
+        flex-direction: column;
+        gap: 10px;
+        padding-bottom: 40px;
+    }
+
+    .report-actions .btn-report {
+        width: 100%;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1380,10 +1425,19 @@ body {
 
     #chatMessages {
         padding: 16px;
+        max-height: 50vh;
     }
 
     .chat-input-area {
         padding: 12px 16px;
+    }
+
+    .report-dim-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .report-card {
+        padding: 16px;
     }
 }
 
