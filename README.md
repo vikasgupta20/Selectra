@@ -1,4 +1,4 @@
-# 🎯 Selectra — AI Interview Agent + Auto Scorecard Generator
+# 🎯 Selectra — Smart Interview Agent + Auto Scorecard Generator
 
 > *"Where interviews meet insight."*
 
@@ -8,7 +8,7 @@
 
 ## 🔍 What is Selectra?
 
-Selectra is an AI-powered Interview Agent that conducts **role-based, text-based interviews** and generates **real-time scorecards with explainable feedback**. No ML models, no external APIs — everything runs on clean heuristic logic that makes every score transparent and auditable.
+Selectra is a **heuristic-powered Interview Agent** that conducts **role-based, text-based interviews** and generates **real-time scorecards with explainable feedback**. It uses **rule-based scoring logic** — no ML models, no neural networks, no external APIs. Every score is computed through transparent, deterministic rules (keyword matching, sentence analysis, filler word detection), making every result fully auditable and explainable.
 
 **In short:** You pick a role → answer 5 tailored questions → get scored live across 4 dimensions → receive a detailed report with strengths, gaps, and next steps.
 
@@ -41,8 +41,8 @@ Four scoring dimensions update in real-time after every answer:
 | **Completeness** | Depth, breadth, use of examples and specifics |
 | **Confidence** | Assertiveness, absence of filler/hesitation language |
 
-### 🧠 Explainable AI (XAI) Panel
-Every score is backed by transparent signal detection:
+### 🧠 Explainable Analysis (XAI) Panel
+Every score is backed by transparent, rule-based signal detection — no machine learning involved:
 - Word count, sentence count, vocabulary diversity ratio
 - Keyword matches against role-specific term lists
 - Filler word detection (*"maybe"*, *"I guess"*, *"um"*)
