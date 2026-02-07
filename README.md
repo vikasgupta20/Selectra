@@ -1,4 +1,4 @@
-# 🎯 Selectra — AI Interview + Auto Scorecard Generator
+# 🎯 Selectra — AI Interview Agent + Auto Scorecard Generator
 
 > *"Where interviews meet insight."*
 
@@ -6,106 +6,181 @@
 
 ---
 
-## What is Selectra?
+## 🔍 What is Selectra?
 
-Selectra is an intelligent, explainable AI Interview Agent that conducts text-based interviews and generates detailed scorecards with real-time feedback. It uses **heuristic-based scoring** (no ML, no external APIs) to evaluate responses across four dimensions:
+Selectra is an AI-powered Interview Agent that conducts **role-based, text-based interviews** and generates **real-time scorecards with explainable feedback**. No ML models, no external APIs — everything runs on clean heuristic logic that makes every score transparent and auditable.
+
+**In short:** You pick a role → answer 5 tailored questions → get scored live across 4 dimensions → receive a detailed report with strengths, gaps, and next steps.
+
+---
+
+## ✨ Key Features
+
+### 🎭 Role-Based Interviews
+Choose from **7 interview tracks**, each with its own question bank:
+
+| Role | Focus Areas |
+|---|---|
+| 🎨 Frontend Developer | React, CSS, accessibility, responsive design |
+| ⚙️ Backend Developer | APIs, databases, authentication, scaling |
+| 🔗 Full Stack Developer | End-to-end architecture, deployment |
+| 📊 Data Science / ML | Pandas, model evaluation, feature engineering |
+| ☁️ DevOps / Cloud | CI/CD, Docker, Kubernetes, monitoring |
+| 🔒 Cybersecurity | Threat modeling, encryption, incident response |
+| 💻 General / Other | Problem solving, teamwork, communication |
+
+Each session randomly selects **2 common + 3 role-specific questions** from a bank of **38+ questions**, so no two interviews are the same.
+
+### 📊 Live Scorecard Sidebar
+Four scoring dimensions update in real-time after every answer:
 
 | Dimension | What It Measures |
 |---|---|
 | **Clarity** | Sentence structure, readability, vocabulary diversity |
-| **Technical Accuracy** | Presence of domain-relevant keywords and concepts |
-| **Completeness** | Depth, breadth, use of examples |
+| **Technical Accuracy** | Domain-relevant keywords and concepts |
+| **Completeness** | Depth, breadth, use of examples and specifics |
 | **Confidence** | Assertiveness, absence of filler/hesitation language |
 
----
+### 🧠 Explainable AI (XAI) Panel
+Every score is backed by transparent signal detection:
+- Word count, sentence count, vocabulary diversity ratio
+- Keyword matches against role-specific term lists
+- Filler word detection (*"maybe"*, *"I guess"*, *"um"*)
+- Assertive phrase detection (*"I built"*, *"I achieved"*, *"definitely"*)
+- Example usage detection (*"for example"*, *"such as"*)
 
-## Features
+### 🚫 Gibberish Detection
+Nonsense inputs like *"asjdhk jjdjhch"* are caught automatically. If < 40% of words are real (vowel-based heuristic), all scores return **0** and the XAI panel flags it.
 
-- 🎯 **5 Interview Questions** across Introduction, Problem Solving, Technical, Teamwork & Career Goals
-- 📊 **Live Scorecard Sidebar** with animated score bars updated after every answer
-- 🧠 **Explainable AI Panel** showing detected signals (word count, keywords, filler words, etc.)
-- 💡 **Dimension-wise Suggestions** with low / medium / high score-range advice
-- 🏅 **Interview Readiness Indicator** (Strong Candidate / Interview Ready / Needs Preparation)
-- 📈 **Overall Insight Summary** with strengths, improvement areas, and next steps
-- 🌙 **Light & Dark Mode** with enterprise-grade UI
-- 📥 **JSON Export** and 🖨️ **Print-ready Report**
+### 🏅 Interview Readiness Indicator
+After answering, you get a readiness badge:
+- **Strong Candidate** (≥ 7.5 avg)
+- **Interview Ready** (≥ 5.0 avg)
+- **Needs Preparation** (< 5.0 avg)
+
+### 📋 Final Report
+A comprehensive overlay with:
+- Overall score and per-dimension breakdown
+- Strengths and areas for improvement
+- Actionable next steps
+- **JSON export** and **print-ready** formatting
+
+### Other Features
+- 🌙 **Light / Dark Mode** toggle
+- 🚪 **Logout** — switch users or roles anytime (confirms if interview is in progress)
 - 🔄 **New Interview** — restart without refreshing
+- 📱 **Mobile Responsive** — works on tablets and phones
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Backend | Python (Flask) |
-| Frontend | HTML5, CSS3, JavaScript (ES6+) |
+| Backend | Python 3.13 + Flask |
+| Frontend | HTML5, CSS3, Vanilla JavaScript (ES6+) |
 | Fonts | Inter, Poppins (Google Fonts) |
-| Storage | In-memory (Python dict), LocalStorage (auth) |
+| Storage | In-memory Python dict (server) + LocalStorage (client auth) |
 
-**No ML libraries. No external APIs. Just clean heuristic logic.**
+**Zero external APIs. Zero ML libraries. Fully self-contained.**
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
-### 1. Install dependencies
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/vikasgupta20/Selectra.git
+cd Selectra
+```
+
+### 2. Set up virtual environment (recommended)
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+# source .venv/bin/activate   # macOS/Linux
+```
+
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Run the application
+### 4. Run the app
 
 ```bash
 python app.py
 ```
 
-### 3. Open in browser
+### 5. Open in browser
 
-Navigate to **http://127.0.0.1:5000**
+```
+http://127.0.0.1:5000
+```
+
+Enter your name, email, select a role, and start your interview!
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
-Microsoft_forge_codeathon/
-├── app.py                  # Flask backend — routes, scoring, suggestions
-├── requirements.txt        # Python dependencies
+Selectra/
+├── app.py                  # Flask backend — scoring engine, API routes, question bank
+├── requirements.txt        # Python dependencies (flask>=3.0.0)
 ├── README.md               # This file
+├── .gitignore              # Standard Python/IDE ignores
 └── static/
-    ├── index.html          # Main HTML page
-    ├── style.css           # Enterprise-grade stylesheet (light/dark)
-    └── script.js           # Frontend logic (fetch API, chat, sidebar, report)
+    ├── index.html          # Login screen, chat UI, sidebar, report overlay
+    ├── style.css           # Enterprise stylesheet (light/dark, responsive)
+    └── script.js           # Frontend logic (login, chat flow, API calls, report)
 ```
 
 ---
 
-## API Endpoints
+## 🔌 API Endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/questions` | Returns all interview questions |
-| `POST` | `/api/evaluate` | Evaluates a single answer → scores + explanations + suggestions |
-| `POST` | `/api/final-report` | Generates full interview report with insights |
-| `POST` | `/api/reset` | Resets session for a new interview |
+| `GET` | `/api/roles` | Returns all 7 available interview roles |
+| `GET` | `/api/questions?role=frontend&sessionId=xxx` | Returns 5 role-specific questions for the session |
+| `POST` | `/api/evaluate` | Scores a single answer → dimensions, explanations, suggestions |
+| `POST` | `/api/final-report` | Generates full report with overall insights |
+| `POST` | `/api/reset` | Resets session state for a new interview |
 
 ---
 
-## How Scoring Works
+## 📐 How Scoring Works
 
-Each answer is analyzed for **measurable signals**:
+```
+User Answer
+    ↓
+Signal Detection  →  word count, keywords, filler words, examples, assertiveness
+    ↓
+Gibberish Check   →  real word ratio < 40%? → all scores = 0
+    ↓
+Four Scorers      →  Clarity (0-10), Accuracy (0-10), Completeness (0-10), Confidence (0-10)
+    ↓
+XAI Explanation   →  human-readable breakdown of why each score was assigned
+    ↓
+Suggestions       →  targeted advice based on score ranges (low / med / high)
+    ↓
+Readiness Badge   →  Strong Candidate / Interview Ready / Needs Preparation
+```
 
-- **Word count**, sentence count, vocabulary diversity
-- **Keyword matching** against question-specific term lists
-- **Filler word detection** (maybe, I guess, um, etc.)
-- **Assertive phrase detection** (I achieved, I built, definitely, etc.)
-- **Example usage** detection (for example, such as, etc.)
-
-These signals drive all four dimension scores (0-10), explanations, and suggestions — making every score **fully explainable**.
+Every score is **deterministic and explainable** — no black-box models.
 
 ---
 
-## License
+## 👥 Team
 
 Built for **Microsoft Forge Hackathon 2026**.
+
+---
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
