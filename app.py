@@ -162,6 +162,16 @@ def detect_signals(answer, question):
         if sentence_count > 0 else word_count
     )
 
+    # Gibberish / nonsense detection
+    # Check how many words are actual English-like words (3+ chars, contain vowels)
+    vowels = set('aeiouAEIOU')
+    real_words = [
+        w for w in words
+        if len(w) >= 3 and any(c in vowels for c in w)
+    ]
+    real_word_ratio = round(len(real_words) / word_count, 2) if word_count > 0 else 0
+    is_gibberish = (real_word_ratio < 0.4) or (word_count > 0 and keyword_match_ratio == 0 and real_word_ratio < 0.6 and word_count < 15)
+
     return {
         "wordCount": word_count,
         "sentenceCount": sentence_count,
@@ -174,7 +184,9 @@ def detect_signals(answer, question):
         "assertiveFound": assertive_found,
         "hasExamples": has_examples,
         "startsWithCapital": starts_with_capital,
-        "avgSentenceLen": avg_sentence_len
+        "avgSentenceLen": avg_sentence_len,
+        "realWordRatio": real_word_ratio,
+        "isGibberish": is_gibberish
     }
 
 
@@ -182,6 +194,10 @@ def score_clarity(signals):
     """
     CLARITY (0-10): Measures sentence structure, readability, and coherence.
     """
+    # Gibberish answers get near-zero clarity
+    if signals["isGibberish"]:
+        return round(min(1.0, signals["realWordRatio"] * 2), 1)
+
     score = 5.0  # Baseline
 
     # Sentence count scoring
@@ -214,6 +230,10 @@ def score_accuracy(signals):
     """
     TECHNICAL ACCURACY (0-10): Measures presence of relevant keywords/concepts.
     """
+    # Gibberish can't be accurate
+    if signals["isGibberish"]:
+        return 0.0
+
     ratio = signals["keywordMatchRatio"]
 
     if ratio >= 0.5:
@@ -240,6 +260,10 @@ def score_completeness(signals):
     """
     COMPLETENESS (0-10): Measures depth, breadth, and use of examples.
     """
+    # Gibberish has no completeness
+    if signals["isGibberish"]:
+        return 0.0
+
     score = 3.0  # Baseline
     wc = signals["wordCount"]
 
@@ -274,17 +298,33 @@ def score_confidence(signals):
     """
     CONFIDENCE (0-10): Measures assertiveness and absence of hedging.
     """
-    score = 8.0  # Start high, deduct for filler words
+    # Gibberish = no confidence
+    if signals["isGibberish"]:
+        return 0.0
 
-    # Deduct for filler words (max -5)
-    score -= min(signals["fillerCount"] * 0.8, 5)
+    # Start at baseline — must earn confidence through real content
+    score = 5.0
+
+    # Bonus for reasonable answer length (shows commitment)
+    wc = signals["wordCount"]
+    if wc >= 40:
+        score += 2
+    elif wc >= 20:
+        score += 1.5
+    elif wc >= 10:
+        score += 0.5
+    else:
+        score -= 2
+
+    # Deduct for filler words (max -4)
+    score -= min(signals["fillerCount"] * 0.8, 4)
 
     # Bonus for assertive language (max +2)
     score += min(len(signals["assertiveFound"]) * 0.5, 2)
 
-    # Penalize very short answers
-    if signals["wordCount"] < 10:
-        score -= 2
+    # Bonus for having real word content
+    if signals["realWordRatio"] >= 0.8:
+        score += 0.5
 
     return round(min(10, max(0, score)), 1)
 
@@ -310,6 +350,18 @@ def generate_explanation(dimension, score, signals):
     """
     text = ""
     detected = []
+
+    # Early return for gibberish
+    if signals["isGibberish"]:
+        detected.append("non-meaningful content detected")
+        detected.append(f"only {round(signals['realWordRatio'] * 100)}% recognizable words")
+        dim_label = dimension.replace("accuracy", "Technical Accuracy").replace("clarity", "Clarity").replace("completeness", "Completeness").replace("confidence", "Confidence")
+        return {
+            "dimension": dim_label,
+            "score": score,
+            "text": "Response appears to be nonsensical or gibberish. Please provide a meaningful answer.",
+            "signalsDetected": detected
+        }
 
     if dimension == "clarity":
         detected.append(f"{signals['sentenceCount']} sentence(s) detected")
@@ -748,7 +800,9 @@ def evaluate_answer():
             "sentenceCount": signals["sentenceCount"],
             "matchedKeywords": signals["matchedKeywords"],
             "fillerWordsFound": signals["fillerWordsFound"],
-            "hasExamples": signals["hasExamples"]
+            "hasExamples": signals["hasExamples"],
+            "isGibberish": signals["isGibberish"],
+            "realWordRatio": signals["realWordRatio"]
         },
         "runningAverages": running_avg,
         "readiness": get_readiness_indicator(running_avg["overall"])

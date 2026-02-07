@@ -519,6 +519,7 @@ function updateXAIPanel(explanations, signals) {
                 <span class="xai-signal-tag">🔑 ${signals.matchedKeywords.length} keywords</span>
                 ${signals.hasExamples ? '<span class="xai-signal-tag">✅ Has examples</span>' : ''}
                 ${signals.fillerWordsFound.length > 0 ? `<span class="xai-signal-tag">⚠️ ${signals.fillerWordsFound.length} filler words</span>` : ""}
+                ${signals.isGibberish ? '<span class="xai-signal-tag" style="background:rgba(239,68,68,0.1);color:var(--score-low);">🚫 Gibberish detected</span>' : ""}
             </div>
         `;
         DOM.xaiPanel.appendChild(summary);
