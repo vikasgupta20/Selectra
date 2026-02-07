@@ -10,6 +10,8 @@
 
 Selectra is a **heuristic-powered Interview Agent** that conducts **role-based, text-based interviews** and generates **real-time scorecards with explainable feedback**. It uses **rule-based scoring logic** — no ML models, no neural networks, no external APIs. Every score is computed through transparent, deterministic rules (keyword matching, sentence analysis, filler word detection), making every result fully auditable and explainable.
 
+> ⚠️ **Note:** Selectra is **not AI-powered**. It does not use any machine learning, large language models, or external AI services. The term "intelligent" here refers to **smart rule-based heuristics** that mimic structured evaluation — every decision is transparent and reproducible.
+
 **In short:** You pick a role → answer 5 tailored questions → get scored live across 4 dimensions → receive a detailed report with strengths, gaps, and next steps.
 
 ---
@@ -29,7 +31,7 @@ Choose from **7 interview tracks**, each with its own question bank:
 | 🔒 Cybersecurity | Threat modeling, encryption, incident response |
 | 💻 General / Other | Problem solving, teamwork, communication |
 
-Each session randomly selects **2 common + 3 role-specific questions** from a bank of **38+ questions**, so no two interviews are the same.
+Each session randomly selects **2 common + 3 role-specific questions** from a bank of **38 questions** (3 common + 35 role-specific), so no two interviews are the same.
 
 ### 📊 Live Scorecard Sidebar
 Four scoring dimensions update in real-time after every answer:
@@ -39,10 +41,10 @@ Four scoring dimensions update in real-time after every answer:
 | **Clarity** | Sentence structure, readability, vocabulary diversity |
 | **Technical Accuracy** | Domain-relevant keywords and concepts |
 | **Completeness** | Depth, breadth, use of examples and specifics |
-| **Confidence** | Assertiveness, absence of filler/hesitation language |
+| **Confidence** | Word count, assertive language, absence of filler/hesitation words |
 
-### 🧠 Explainable Analysis (XAI) Panel
-Every score is backed by transparent, rule-based signal detection — no machine learning involved:
+### 🧠 Explainable Analysis Panel
+Every score is backed by transparent, rule-based signal detection — **no machine learning involved**:
 - Word count, sentence count, vocabulary diversity ratio
 - Keyword matches against role-specific term lists
 - Filler word detection (*"maybe"*, *"I guess"*, *"um"*)
@@ -50,7 +52,7 @@ Every score is backed by transparent, rule-based signal detection — no machine
 - Example usage detection (*"for example"*, *"such as"*)
 
 ### 🚫 Gibberish Detection
-Nonsense inputs like *"asjdhk jjdjhch"* are caught automatically. If < 40% of words are real (vowel-based heuristic), all scores return **0** and the XAI panel flags it.
+Nonsense inputs like *"asjdhk jjdjhch"* are caught automatically. If < 40% of words are real (vowel-based heuristic), all scores return **0** and the analysis panel flags it.
 
 ### 🏅 Interview Readiness Indicator
 After answering, you get a readiness badge:
@@ -79,6 +81,7 @@ A comprehensive overlay with:
 |---|---|
 | Backend | Python 3.13 + Flask |
 | Frontend | HTML5, CSS3, Vanilla JavaScript (ES6+) |
+| Scoring | Rule-based heuristics (no ML, no external APIs) |
 | Fonts | Inter, Poppins (Google Fonts) |
 | Storage | In-memory Python dict (server) + LocalStorage (client auth) |
 
@@ -135,7 +138,7 @@ Selectra/
 ├── .gitignore              # Standard Python/IDE ignores
 └── static/
     ├── index.html          # Login screen, chat UI, sidebar, report overlay
-    ├── style.css           # Enterprise stylesheet (light/dark, responsive)
+    ├── style.css           # Stylesheet (light/dark mode, responsive)
     └── script.js           # Frontend logic (login, chat flow, API calls, report)
 ```
 
@@ -164,23 +167,19 @@ Gibberish Check   →  real word ratio < 40%? → all scores = 0
     ↓
 Four Scorers      →  Clarity (0-10), Accuracy (0-10), Completeness (0-10), Confidence (0-10)
     ↓
-XAI Explanation   →  human-readable breakdown of why each score was assigned
+Explanation       →  human-readable breakdown of why each score was assigned
     ↓
 Suggestions       →  targeted advice based on score ranges (low / med / high)
     ↓
 Readiness Badge   →  Strong Candidate / Interview Ready / Needs Preparation
 ```
 
-Every score is **deterministic and explainable** — no black-box models.
+All scoring is **deterministic and rule-based** — no black-box models, no randomness in evaluation.
 
 ---
 
 ## 👥 Team
 
-Built for **Microsoft Forge Hackathon 2026**.
+Built by **Vikas Gupta** for **Microsoft Forge Hackathon 2026**.
 
 ---
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
