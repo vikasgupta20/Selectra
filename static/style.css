@@ -358,6 +358,10 @@ body {
     font-size: 1.1rem;
 }
 
+.btn-logout {
+    font-size: 1.1rem;
+}
+
 .btn-icon:hover {
     background: var(--bg-hover);
     color: var(--accent-primary);

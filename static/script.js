@@ -40,6 +40,7 @@ const DOM = {
     appContainer: $("appContainer"),
     headerUser: $("headerUser"),
     themeToggle: $("themeToggle"),
+    logoutBtn: $("logoutBtn"),
     // Chat
     chatMessages: $("chatMessages"),
     answerInput: $("answerInput"),
@@ -75,6 +76,7 @@ function bindEvents() {
     DOM.loginBtn.addEventListener("click", handleLogin);
     DOM.sendBtn.addEventListener("click", sendAnswer);
     DOM.themeToggle.addEventListener("click", toggleTheme);
+    DOM.logoutBtn.addEventListener("click", handleLogout);
 
     DOM.answerInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
@@ -93,6 +95,10 @@ function bindEvents() {
     DOM.loginEmail.addEventListener("keydown", (e) => {
         if (e.key === "Enter") handleLogin();
     });
+
+    DOM.loginRole.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") handleLogin();
+    });
 }
 
 function checkExistingSession() {
@@ -102,6 +108,40 @@ function checkExistingSession() {
         state.role = localStorage.getItem("selectra_role") || "general";
         startApp();
     }
+}
+
+function handleLogout() {
+    if (state.answers.length > 0 && !state.interviewComplete) {
+        if (!confirm("You have an interview in progress. Are you sure you want to logout?")) return;
+    }
+    localStorage.removeItem("selectra_user");
+    localStorage.removeItem("selectra_role");
+    state.user = null;
+    state.role = "general";
+    state.questions = [];
+    state.answers = [];
+    state.currentQuestionIndex = 0;
+    state.isWaiting = false;
+    state.interviewComplete = false;
+    state.reportData = null;
+    state.latestScores = null;
+    state.latestSuggestions = null;
+    state.latestExplanations = null;
+    state.readiness = null;
+    state.sessionId = "session_" + Date.now();
+
+    DOM.chatMessages.innerHTML = "";
+    DOM.answerInput.value = "";
+    DOM.answerInput.disabled = true;
+    DOM.sendBtn.disabled = true;
+    DOM.inputHint.textContent = "Waiting to start...";
+    DOM.loginName.value = "";
+    DOM.loginEmail.value = "";
+    DOM.loginRole.value = "general";
+
+    DOM.loginScreen.style.display = "flex";
+    DOM.appContainer.style.display = "none";
+    document.getElementById("reportSection").style.display = "none";
 }
 
 // ═══════════════════════════════════════════════
