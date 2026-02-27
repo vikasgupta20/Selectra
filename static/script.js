@@ -1,10 +1,10 @@
 /**
  * ════════════════════════════════════════════════════
- * SELECTRA – AI Interview Agent  (Frontend Logic)
+ * SELECTRA – AI Decision Intelligence Platform (Frontend)
  * "Where interviews meet insight."
  *
  * Connects to Flask backend via fetch() API
- * Handles: Login, Chat Conversation, Live Scorecard,
+ * Handles: Landing Page, Login, Chat, Live Scorecard,
  *          XAI Panel, Suggestions, Report Generation
  * ════════════════════════════════════════════════════
  */
@@ -30,6 +30,12 @@ const state = {
 const $ = (id) => document.getElementById(id);
 
 const DOM = {
+    // Landing
+    landingPage: $("landingPage"),
+    mainNav: $("mainNav"),
+    navStartBtn: $("navStartBtn"),
+    heroStartBtn: $("heroStartBtn"),
+    heroLearnBtn: $("heroLearnBtn"),
     // Login
     loginScreen: $("loginScreen"),
     loginName: $("loginName"),
@@ -46,7 +52,7 @@ const DOM = {
     answerInput: $("answerInput"),
     sendBtn: $("sendBtn"),
     inputHint: $("inputHint"),
-    // Sidebar
+    // Sidebar (Right Scorecard)
     progressText: $("progressText"),
     progressDetail: $("progressDetail"),
     progressRingFill: $("progressRingFill"),
@@ -67,15 +73,24 @@ const DOM = {
 // ═══════════════════════════════════════════════
 
 document.addEventListener("DOMContentLoaded", () => {
-    initTheme();
     bindEvents();
+    initLandingPage();
     checkExistingSession();
 });
 
 function bindEvents() {
+    // Landing page buttons
+    DOM.navStartBtn.addEventListener("click", showLogin);
+    DOM.heroStartBtn.addEventListener("click", showLogin);
+    DOM.heroLearnBtn.addEventListener("click", () => {
+        document.getElementById("features").scrollIntoView({ behavior: "smooth" });
+    });
+
+    // Login
     DOM.loginBtn.addEventListener("click", handleLogin);
+
+    // Chat
     DOM.sendBtn.addEventListener("click", sendAnswer);
-    DOM.themeToggle.addEventListener("click", toggleTheme);
     DOM.logoutBtn.addEventListener("click", handleLogout);
 
     DOM.answerInput.addEventListener("keydown", (e) => {
@@ -101,11 +116,64 @@ function bindEvents() {
     });
 }
 
+// ═══════════════════════════════════════════════
+// LANDING PAGE
+// ═══════════════════════════════════════════════
+
+function initLandingPage() {
+    // Navbar scroll effect
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 20) {
+            DOM.mainNav.classList.add("scrolled");
+        } else {
+            DOM.mainNav.classList.remove("scrolled");
+        }
+    });
+
+    // Fade-in on scroll (Intersection Observer)
+    const fadeElements = document.querySelectorAll(".fade-in-section");
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+
+    fadeElements.forEach(el => observer.observe(el));
+}
+
+function showLogin() {
+    DOM.loginScreen.classList.add("active");
+    DOM.loginName.focus();
+}
+
+function hideLogin() {
+    DOM.loginScreen.classList.remove("active");
+}
+
+function hideLandingPage() {
+    DOM.landingPage.style.display = "none";
+    DOM.mainNav.style.display = "none";
+}
+
+function showLandingPage() {
+    DOM.landingPage.style.display = "block";
+    DOM.mainNav.style.display = "flex";
+}
+
+// ═══════════════════════════════════════════════
+// SESSION
+// ═══════════════════════════════════════════════
+
 function checkExistingSession() {
     const saved = localStorage.getItem("selectra_user");
     if (saved) {
         state.user = JSON.parse(saved);
         state.role = localStorage.getItem("selectra_role") || "general";
+        hideLandingPage();
+        hideLogin();
         startApp();
     }
 }
@@ -139,31 +207,11 @@ function handleLogout() {
     DOM.loginEmail.value = "";
     DOM.loginRole.value = "general";
 
-    DOM.loginScreen.style.display = "flex";
+    DOM.appContainer.classList.remove("active");
     DOM.appContainer.style.display = "none";
-    document.getElementById("reportSection").style.display = "none";
-}
-
-// ═══════════════════════════════════════════════
-// THEME MANAGEMENT
-// ═══════════════════════════════════════════════
-
-function initTheme() {
-    const saved = localStorage.getItem("selectra_theme") || "light";
-    document.documentElement.setAttribute("data-theme", saved);
-    updateThemeIcon(saved);
-}
-
-function toggleTheme() {
-    const current = document.documentElement.getAttribute("data-theme");
-    const next = current === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("selectra_theme", next);
-    updateThemeIcon(next);
-}
-
-function updateThemeIcon(theme) {
-    DOM.themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
+    DOM.reportSection.classList.remove("active");
+    DOM.reportSection.style.display = "none";
+    showLandingPage();
 }
 
 // ═══════════════════════════════════════════════
@@ -188,6 +236,8 @@ function handleLogin() {
     state.role = DOM.loginRole.value;
     localStorage.setItem("selectra_user", JSON.stringify(state.user));
     localStorage.setItem("selectra_role", state.role);
+    hideLogin();
+    hideLandingPage();
     startApp();
 }
 
@@ -203,7 +253,6 @@ function shakeElement(el) {
 // ═══════════════════════════════════════════════
 
 async function startApp() {
-    DOM.loginScreen.style.display = "none";
     DOM.appContainer.classList.add("active");
     DOM.headerUser.textContent = state.user.name;
 
@@ -462,8 +511,8 @@ function updateProgress() {
     DOM.progressDetail.textContent = `${pct}% Complete`;
     DOM.progressRingText.textContent = `${answered}/${total}`;
 
-    // Update SVG ring
-    const radius = 22;
+    // Update SVG ring (radius = 20 in new HTML)
+    const radius = 20;
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (pct / 100) * circumference;
     DOM.progressRingFill.style.strokeDasharray = circumference;
@@ -505,7 +554,7 @@ function updateOverallScore(overall) {
     DOM.overallScoreCard.style.display = "block";
     DOM.overallScoreValue.textContent = overall;
     DOM.overallScoreCard.classList.add("score-flash");
-    setTimeout(() => DOM.overallScoreCard.classList.remove("score-flash"), 800);
+    setTimeout(() => DOM.overallScoreCard.classList.remove("score-flash"), 600);
 }
 
 function updateReadinessBadge(readiness) {
@@ -568,7 +617,7 @@ function updateXAIPanel(explanations, signals) {
         summary.className = "xai-item";
         summary.style.marginTop = "8px";
         summary.style.paddingTop = "8px";
-        summary.style.borderTop = "1px solid var(--border-light)";
+        summary.style.borderTop = "1px solid var(--border)";
         summary.innerHTML = `
             <div class="xai-dim">Signal Summary</div>
             <div class="xai-signals">
@@ -577,7 +626,7 @@ function updateXAIPanel(explanations, signals) {
                 <span class="xai-signal-tag">🔑 ${signals.matchedKeywords.length} keywords</span>
                 ${signals.hasExamples ? '<span class="xai-signal-tag">✅ Has examples</span>' : ''}
                 ${signals.fillerWordsFound.length > 0 ? `<span class="xai-signal-tag">⚠️ ${signals.fillerWordsFound.length} filler words</span>` : ""}
-                ${signals.isGibberish ? '<span class="xai-signal-tag" style="background:rgba(239,68,68,0.1);color:var(--score-low);">🚫 Gibberish detected</span>' : ""}
+                ${signals.isGibberish ? '<span class="xai-signal-tag" style="background:rgba(248,81,73,0.1);color:var(--score-low);">🚫 Gibberish detected</span>' : ""}
             </div>
         `;
         DOM.xaiPanel.appendChild(summary);
@@ -603,7 +652,7 @@ async function finishInterview() {
 
     // Add report button in chat
     const btnWrapper = document.createElement("div");
-    btnWrapper.style.cssText = "text-align: left; margin-top: 8px;";
+    btnWrapper.style.cssText = "text-align: left; margin-top: 12px;";
 
     const btn = document.createElement("button");
     btn.className = "btn-primary";
@@ -751,7 +800,6 @@ function renderReport(data) {
                             <span class="report-qa-score-chip" style="color: ${getScoreColor(r.scores.completeness)}">Completeness: ${r.scores.completeness}</span>
                             <span class="report-qa-score-chip" style="color: ${getScoreColor(r.scores.confidence)}">Confidence: ${r.scores.confidence}</span>
                         </div>
-                        <!-- Suggestions for this response -->
                         ${Object.entries(r.suggestions).map(([dim, s]) => `
                             <div class="suggestion-card suggestion-level-${s.level}" style="margin-top: 8px;">
                                 <div class="suggestion-header">
@@ -838,7 +886,7 @@ async function newInterview() {
     DOM.chatMessages.innerHTML = "";
     DOM.scoresContainer.innerHTML = "";
     DOM.suggestionsContainer.innerHTML = "";
-    DOM.xaiPanel.innerHTML = '<h4>🔍 Explainable AI Analysis</h4><p style="font-size:0.78rem;color:var(--text-muted);">Submit your first answer to see analysis.</p>';
+    DOM.xaiPanel.innerHTML = '<h4>🔍 Explainable AI Analysis</h4><p style="font-size:0.74rem;color:var(--text-muted);">Submit your first answer to see analysis.</p>';
     DOM.overallScoreCard.style.display = "none";
     DOM.readinessBadge.style.display = "none";
     DOM.reportSection.classList.remove("active");
@@ -849,7 +897,8 @@ async function newInterview() {
     DOM.progressText.textContent = "0 of 0 Answered";
     DOM.progressDetail.textContent = "0% Complete";
     DOM.progressRingText.textContent = "0/0";
-    DOM.progressRingFill.style.strokeDashoffset = 2 * Math.PI * 22;
+    const radius = 20;
+    DOM.progressRingFill.style.strokeDashoffset = 2 * Math.PI * radius;
 
     // Restart
     startApp();
